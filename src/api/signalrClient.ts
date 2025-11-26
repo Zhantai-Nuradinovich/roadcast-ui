@@ -1,16 +1,33 @@
 import * as signalR from "@microsoft/signalr";
 
-export const hubConnection = new signalR.HubConnectionBuilder()
-  .withUrl("http://localhost:5000/geohub")
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+
+export const geoHub = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE}/hubs/geo`, {
+    accessTokenFactory: () => localStorage.getItem("jwt") || ""
+  })
   .withAutomaticReconnect()
   .build();
 
-export async function startConnection() {
+export const dmHub = new signalR.HubConnectionBuilder()
+  .withUrl(`${API_BASE}/hubs/direct`, {
+    accessTokenFactory: () => localStorage.getItem("jwt") || ""
+  })
+  .withAutomaticReconnect()
+  .build();
+
+export async function startHubs() {
   try {
-    await hubConnection.start();
-    console.log("Connected to SignalR");
-  } catch (err) {
-    console.error("SignalR Connection Error:", err);
-    setTimeout(startConnection, 2000);
+    await geoHub.start();
+    console.log("geoHub connected");
+  } catch (e) {
+    console.warn("geoHub start failed", e);
+    setTimeout(startHubs, 2000);
+  }
+  try {
+    await dmHub.start();
+    console.log("dmHub connected");
+  } catch (e) {
+    console.warn("dmHub start failed", e);
   }
 }

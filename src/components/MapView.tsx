@@ -1,15 +1,13 @@
+import React from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-export function MapView({ userLocation, nearbyUsers }) {
+export default function MapView({ center, nearby = [] }: { center: {lat:number,lng:number}, nearby: any[] }) {
   return (
-    <MapContainer center={[userLocation.lat, userLocation.lng]} zoom={15}>
+    <MapContainer center={[center.lat, center.lng]} zoom={15} style={{ height: "70vh", width: "100%" }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      
-      <Marker position={[userLocation.lat, userLocation.lng]} />
-      
-      {nearbyUsers.map((u) => (
-        <Marker key={u.userId} position={[u.latitude, u.longitude]} />
-      ))}
+      <Marker position={[center.lat, center.lng]} />
+      {nearby.map(u => <Marker key={u.userId} position={[u.latitude, u.longitude]} />)}
     </MapContainer>
   );
 }
