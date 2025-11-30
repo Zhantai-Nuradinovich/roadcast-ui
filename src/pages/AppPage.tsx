@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MapView from "../components/MapView";
+import NavigationMap from "../components/NavigationMap";
 import { startHubs, geoHub, dmHub } from "../api/signalrClient";
 import { useInterval } from "../hooks/useInterval";
 import { movePoint } from "../services/MovementEngine";
@@ -11,6 +11,7 @@ export default function AppPage() {
   const [heading, setHeading] = useState(90); // deg
   const [auto, setAuto] = useState(false);
   const [nearby, setNearby] = useState<any[]>([]);
+  const [pathHistory, setPathHistory] = useState([{ lat: pos.lat, lng: pos.lng }]);
 
   useEffect(() => { startHubs(); }, []);
 
@@ -57,7 +58,11 @@ export default function AppPage() {
       </div>
 
       <div style={{ flex: 1 }}>
-        <MapView center={{lat: pos.lat, lng: pos.lng}} nearby={nearby} />
+        <NavigationMap
+          pos={pos}
+          heading={heading}
+          pathHistory={pathHistory}
+        />
       </div>
     </div>
   );
